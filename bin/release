@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+
+# The release script provides feedback metadata back to Cloud Foundry 
+# indicating how the application should be executed. The script is run with 
+# one argument, the build location of the application. The script must 
+# generate a YAML file in the following format:
+#
+#  config_vars:
+#    name: value
+#  default_process_types:
+#    web: commandLine
+#
+# Where config_vars is an optional set of environment variables that will be 
+# defined in the environment in which the application is executed. 
+# default_process_types indicates the type of application being run and the 
+# command line used to start it. At this time only web type of applications 
+# are supported.
+#
+# NOTE: It seems that as of at least 01/10/14, the config_vars setting isn't used
+# by Cloud Foundry.  The alternative mechanism for passing environment to the 
+# running service is to set them via the start up script if needed. 
+
+print 'config_var:'
+print '  THIS_DOES_NOTHING: DEPRECATED'
+print 'default_process_types:'
+print '  web: ./message.sh'

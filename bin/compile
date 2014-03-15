@@ -1,0 +1,62 @@
+#!/usr/bin/env python
+
+# The compile script builds the droplet that will be run by the DEA and will 
+# therefore contain all the components necessary to run the application.
+#
+# The script is run with two arguments, the build directory for the 
+# application and the cache directory.
+# 
+# The build directory is the location that the compile script should lay out all 
+# the servers, and frameworks into that are needed to run the application.  
+#
+# The cache directory is a location scoped to a single application that can be 
+# used to cache assets so that subsequent builds of the same application will be 
+# faster.  So if you push an app with the same app GUID (which is triggered by 
+# pushing an app with the name of an app that already exists in a targeted 
+# space), then the same cache directory that was used for the previous build 
+# will be made available to the buildpack compile script for the new application 
+# deployment.
+# 
+# During execution of this script all output sent to STDOUT will be relayed 
+# via CF back to the end user. 
+#
+# The generally accepted pattern for a more complex compile script is to break 
+# out functionality in to a 'language_pack'. A good example of this can be seen 
+# at 
+# https://github.com/cloudfoundry/heroku-buildpack-ruby/blob/master/lib/language_pack/ruby.rb
+
+# This particular script will simply copy a hello-start.sh script file that 
+# will be executed by Cloud Foundry at this application's startup.
+
+import sys
+import os
+import shutil
+
+#Directory of the buildpack
+BP_DIR = os.path.dirname(os.path.dirname(sys.argv[0]))
+
+# The directory the files for the droplet are put
+BUILD_DIR=sys.argv[1]
+# Name of the startup script
+MESSAGE_SERVER_SCRIPT='message.sh'
+
+# Read in the message from the application to prove it is there
+message = ''
+with open(os.path.join(BUILD_DIR, 'message.msg'), 'rt') as messageFile:
+  message = messageFile.read()
+print 'Got message: ', message
+
+# The start script is so small, we just included it with the buildpack, but in 
+# a real buildpack the server binaries are great candidates for caching
+print 'Putting start script into droplet'
+try:
+  shutil.copy(
+    os.path.join(BP_DIR, MESSAGE_SERVER_SCRIPT),
+    os.path.join(BUILD_DIR, MESSAGE_SERVER_SCRIPT)
+  )
+except IOError as (errno, strerror):
+  print "compile: I/O Error({0}) during startup script copy: {1}".format(errno, strerror)
+  raise
+except:
+  print "Unexpected error in compile phase:", sys.exc_info()[0]
+  raise

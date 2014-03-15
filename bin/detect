@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+
+# The detect script is used to determine whether or not to apply the buildpack 
+# to an application. The script is called with one argument, the build 
+# directory for the application. It returns an exit code of 0 if the 
+# application can be supported by the buildpack. If the script does return 0, 
+# it should also print a framework name to STDOUT.
+
+import sys
+import os
+
+# Location of application files
+BUILD_DIR=sys.argv[1]
+# Path to our message file
+MESSAGE_FILE=os.path.join(BUILD_DIR, "message.msg")
+
+# Does the message file exist?
+if os.path.isfile(MESSAGE_FILE):
+  # Let the user know we found the hallmarks of a 'Message-App' style app
+  print 'Message-App'
+  # Let Cloud Foundry know that this buildpack can indeed handle this application
+  sys.exit(0)
+
+# Otherwise, we didn't find out message file, and will let Cloud Foundry know 
+# That this buildpack is unable to handle this application
+print 'no'
+sys.exit(1)
