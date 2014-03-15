@@ -38,7 +38,7 @@ BP_DIR = os.path.dirname(os.path.dirname(sys.argv[0]))
 # The directory the files for the droplet are put
 BUILD_DIR=sys.argv[1]
 # Name of the startup script
-MESSAGE_SERVER_SCRIPT='message.sh'
+MESSAGE_SERVER_SCRIPT='message-server.sh'
 
 # Read in the message from the application to prove it is there
 message = ''
